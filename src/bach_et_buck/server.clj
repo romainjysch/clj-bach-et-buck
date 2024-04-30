@@ -3,7 +3,7 @@
             [reitit.ring             :as reitit]
             [ring.adapter.jetty      :as jetty]
             [ring.util.http-response :as response]
-            [ring.middleware.json    :refer [wrap-json-body]]))
+            [ring.middleware.json    :refer :all]))
 
 (def handler
   (reitit/ring-handler
@@ -19,4 +19,4 @@
 (defn start-server
   "Starts an HTTP server running on port 11000."
   []
-  (jetty/run-jetty (-> #'handler wrap-json-body) {:port 11000 :join? false}))
+  (jetty/run-jetty #'handler {:port 11000 :join? false}))
