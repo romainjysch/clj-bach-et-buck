@@ -6,4 +6,4 @@
   [request]
   {:status  200
    :headers {"Content-Type" "application/json"}
-   :body    (str (write-str (db/get-customers)))})
+   :body    (write-str (db/get-customers))})
