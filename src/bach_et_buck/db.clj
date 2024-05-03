@@ -11,7 +11,13 @@
 (defn get-customers
   []
   (jdbc/execute! db-spec
-                 ["SELECT * FROM customers"]
+                 ["select c.lastname,
+                          c.firstname,
+                          c.gender,
+                          c.birthday,
+                          TIMESTAMPDIFF(YEAR, c.birthday, CURDATE()) as age,
+                          c.cardnumber
+                   from customers c"]
                  {:builder-fn rs/as-kebab-maps}))
 
 (comment
