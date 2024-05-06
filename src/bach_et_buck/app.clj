@@ -1,11 +1,25 @@
 (ns bach-et-buck.app
-  (:require [clojure.tools.logging :as log]
-            [bach-et-buck.server   :as http]))
+  (:require [bach-et-buck.system   :as system]
+            [clojure.java.io       :as io]
+            [clojure.tools.logging :as log]))
 
-(defn start [& _]
-  (log/info "HTTP server starting...")
-  (http/start-server)
-  (log/info "HTTP server started."))
+(defn read-config
+  []
+  (->> (io/resource "config.edn")
+       slurp
+       read-string))
+
+(defn run
+  [& _]
+  (let [config (read-config)]
+    (log/info "Server starting...")
+    (.start (system/build-server config)))
+    (log/info "Server started."))
 
 (comment
-  (start))
+  (run))
+
+(comment
+  (use 'com.stuartsierra.component)
+  (def system (.start (system/build-server (read-config))))
+  (stop system))
