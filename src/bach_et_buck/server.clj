@@ -22,6 +22,3 @@
       (when server
         (.stop (:server this))))
     this))
-
-(comment
-  (service/find-romain))
