@@ -1,24 +1,22 @@
 (ns bach-et-buck.db
-  (:require [clojure.java.io      :as io]
-            [next.jdbc            :as jdbc]
-            [next.jdbc.result-set :as rs]))
+  (:require [seql.helpers :refer [make-schema entity field ident]]
+            [seql.core    :refer [query]]))
 
-(def db-spec
-  (->> (io/resource "config.edn")
-       slurp
-       read-string))
+(def schema
+  (make-schema
+    (entity :customers
+            (field :numero (ident))
+            (field :lastname)
+            (field :firstname)
+            (field :gender)
+            (field :birthday)
+            (field :cardnumber))))
 
-(defn get-customers
-  []
-  (jdbc/execute! db-spec
-                 ["select c.lastname,
-                          c.firstname,
-                          c.gender,
-                          c.birthday,
-                          TIMESTAMPDIFF(YEAR, c.birthday, CURDATE()) as age,
-                          c.cardnumber
-                   from customers c"]
-                 {:builder-fn rs/as-kebab-maps}))
-
-(comment
-  (get-customers))
+(defn find-customers [datasource]
+  (query datasource
+         :customers
+         [:customers/lastname
+          :customers/firstname
+          :customers/gender
+          :customers/birthday
+          :customers/cardnumber]))

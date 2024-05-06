@@ -9,7 +9,7 @@ CLJ=clojure -J-Dclojure.main.report=stderr
 ##@ Commands
 
 run: ## Start application
-	clojure -X bach-et-buck.app/start
+	clojure -X bach-et-buck.app/run
 
 compose-up: ## Start containers
 	echo "Starting containers..."

@@ -1,22 +1,27 @@
 (ns bach-et-buck.server
-  (:require [bach-et-buck.routes     :as routes]
-            [reitit.ring             :as reitit]
-            [ring.adapter.jetty      :as jetty]
-            [ring.util.http-response :as response]
-            [ring.middleware.json    :refer :all]))
+  (:require [bach-et-buck.service       :as service]
+            [com.stuartsierra.component :as component]
+            [clojure.data.json          :refer [write-str]]
+            [ring.adapter.jetty         :refer [run-jetty]]
+            [compojure.core             :refer [routes GET]]))
 
-(def handler
-  (reitit/ring-handler
-    (reitit/router routes/routes)
-    (reitit/create-default-handler
-      {:not-found
-       (constantly (response/not-found "404 - Page not found"))
-       :method-not-allowed
-       (constantly (response/method-not-allowed "405 - Not allowed"))
-       :not-acceptable
-       (constantly (response/not-acceptable "406 - Not acceptable"))})))
+(defn make-handler
+  [service]
+  (routes
+    (GET "/customers" [] (write-str (service/find-customers service)))))
 
-(defn start-server
-  "Starts an HTTP server running on port 11000."
-  []
-  (jetty/run-jetty #'handler {:port 11000 :join? false}))
+(defrecord Server [config
+                   service] ;; dependency
+  component/Lifecycle
+  (start [this]
+    (assoc this :server (run-jetty (#'make-handler service)
+                                   {:join? false
+                                    :port (get config :port 11000)})))
+  (stop [this]
+    (let [{:keys [server]} this]
+      (when server
+        (.stop (:server this))))
+    this))
+
+(comment
+  (service/find-romain))
