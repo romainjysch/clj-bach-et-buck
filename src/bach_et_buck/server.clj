@@ -9,10 +9,17 @@
 
 (defn make-handler [service]
   (routes
-        (GET "/customers" [] (info "GET /customers asked.")
-                             {:status  200
-                              :headers {"Content-Type" "application/json"}
-                              :body    (write-str (service/find-customers service))})))
+        (GET "/customers" []
+          (info "GET /customers asked")
+          {:status  200
+           :headers {"Content-Type" "application/json"}
+           :body    (write-str (service/find-all-customers service))})
+
+        (GET "/customer/:cardnumber" [cardnumber]
+          (info "GET /customer/:cardnumber asked for" cardnumber)
+          {:status  200
+           :headers {"Content-Type" "application/json"}
+           :body    (write-str (service/find-customer-by-cardnumber service cardnumber))})))
 
 (defrecord Server [config
                    service] ;; dependency
