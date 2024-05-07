@@ -1,6 +1,5 @@
 (ns bach-et-buck.datasource
-  (:require [bach-et-buck.db            :as db]
-            [com.stuartsierra.component :as component])
+  (:require [com.stuartsierra.component :as component])
   (:import  [com.zaxxer.hikari HikariConfig HikariDataSource]))
 
 (defn hikari-config [config]
@@ -15,7 +14,6 @@
   (start [this]
     (let [datasource (HikariDataSource. (hikari-config config))]
       (merge this {:datasource datasource
-                   :schema db/schema
                    :jdbc datasource})))
   (stop [{:keys [datasource]}]
     (.close datasource)))
