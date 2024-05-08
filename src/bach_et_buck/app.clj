@@ -9,7 +9,7 @@
        slurp
        read-string))
 
-(defn run
+(defn -main
   [& _]
   (let [config (read-config)]
     (log/info "Server starting...")
@@ -17,7 +17,7 @@
     (log/info "Server started."))
 
 (comment
-  (run))
+  (-main))
 
 (comment
   (use 'com.stuartsierra.component)
